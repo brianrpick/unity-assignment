@@ -12,4 +12,13 @@ class ProjectsController < ApplicationController
       render json: { message: Project.errors.as_json }
     end
   end
+  def show
+    link_params = {
+      id: params[:projectid], project_name: params[:projectName], creation_date: params[:creationDate], expiry_date: params[:expiryDate], enabled: params[:enabled], target_countries: params[:country], project_cost: params[:projectCost], project_url: params[:projectUrl], target_keys: params[:targetKeys]
+    }
+    @projects = Project.find_project(link_params)
+    if @projects.empty?
+      render json: { message: 'no project found' }
+    end
+  end
 end
