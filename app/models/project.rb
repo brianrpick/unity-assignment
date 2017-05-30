@@ -1,10 +1,16 @@
 class Project < ApplicationRecord
   def self.create_project(project)
+    date = DateTime.now.strftime('%m%d%Y %T')
     if project[:enabled].nil?
       project[:enabled] = true
     end
     open('projects.txt', 'a') do |f|
       f << project.as_json
+      f << "\n"
+    end
+    open('logs.txt', 'a') do |f|
+      f << "New project created named: #{project[:project_name]}, with id: #{project[:id]}"
+      f << " - This project was created at #{date}"
       f << "\n"
     end
   end
@@ -34,6 +40,7 @@ class Project < ApplicationRecord
   end
 
   def self.find_highest_cost(projects)
+    date = DateTime.now.strftime('%m%d%Y %T')
     highest_cost = []
     if projects.length > 1
       projects.each do |project|
@@ -46,7 +53,11 @@ class Project < ApplicationRecord
     else
       highest_cost = projects
     end
-    highest_cost
+    open('logs.txt', 'a') do |f|
+      f << "Web Service Accessed on #{date}, responding with Project id: #{highest_cost['id']}"
+      f << "\n"
+    end
+    return highest_cost
   end
 
   def self.find_project(link_params)

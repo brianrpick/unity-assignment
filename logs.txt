@@ -1,0 +1,5 @@
+New project created named: test project number 1, with id: 5 - This project was created at 05302017 00:47:35
+New project created named: test project number 1, with id: 6 - This project was created at 05302017 00:50:53
+Web Service Accessed on , responding with Project id: 2
+Web Service Accessed on , responding with Project id: 4
+Web Service Accessed on 05302017 01:04:27, responding with Project id: 4
