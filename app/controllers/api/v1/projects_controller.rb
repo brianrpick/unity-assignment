@@ -9,7 +9,7 @@ class Api::V1::ProjectsController < ApplicationController
       # send success message
       render json: { message: 'campaign is successfully created' }
     else
-      render json: { message: Project.errors.as_json }
+      render json: { message: 'too many missing parameters' }
     end
   end
   def show

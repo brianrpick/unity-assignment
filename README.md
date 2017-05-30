@@ -27,14 +27,16 @@ $ git clone git@github.com:brianrpick/unity-assignment.git
 $ cd unity-assignment
 $ rails db:setup
 $ bundle install
+$ rails s
 ```
+And let the fun begin!
 
 ## Running the tests
 
-RSpec Tests can be run inside the terminal by executing the following code
+Test collection provided through Postman
 
 ```
-bundle exec rspec --tty spec/request/projects_controller_spec.rb
+https://www.getpostman.com/collections/5e7c9ba3c03bc0e8c60d
 ```
 
 ### Break down

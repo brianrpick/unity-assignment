@@ -49,7 +49,7 @@ class Project < ApplicationRecord
     date = DateTime.now.strftime('%m%d%Y %T')
     highest_cost = []
     # run if more than one project is in array, 9 being absolute project length
-    if projects.length > 1
+    if projects.is_a?(Array) && projects.length
       projects.each do |project|
         # if empty, make project what we are testing against
         if highest_cost.empty?
@@ -61,8 +61,6 @@ class Project < ApplicationRecord
       end
     elsif projects.length == 9
       highest_cost = projects
-    else
-      highest_cost = 'no project found'
       # if only one project, return that project to controller
     end
     if !highest_cost.empty?
@@ -71,14 +69,16 @@ class Project < ApplicationRecord
         f << "Web Service Accessed on #{date}, responding with Project id: #{highest_cost['id']}"
         f << "\n"
       end
+      highest_cost
+
     else
       open('logs.txt', 'a') do |f|
         f << "Web Service Accessed on #{date}, no project found"
         f << "\n"
       end
+      highest_cost = 'no project found'
     end
     # return highest cost project to requestee
-    highest_cost
   end
 
   def self.find_project(link_params)
@@ -89,8 +89,8 @@ class Project < ApplicationRecord
     all_projects = self.all_projects
     if slim_params.empty?
       selected_projects = all_projects
-    elsif slim_params[:id]
-      selected_projects = all_projects.find {|i| i["id"] == slim_params[:id] }
+    elsif slim_params['id']
+      selected_projects = all_projects.find {|i| i["id"] == slim_params['id'].to_i }
     else
       all_projects.each do |project|
         # send each project to see if parameters match hash values
@@ -114,7 +114,7 @@ class Project < ApplicationRecord
           # check target keys for matching or greater values
           if target_hash.any? { target_hash[key] == value }
             return project
-          elsif target_hash['number'] > slim_params['number'].to_i
+          elsif slim_params['number'] && target_hash['number'] > slim_params['number'].to_i
             return project
           end
         end
