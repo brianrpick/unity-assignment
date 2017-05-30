@@ -17,8 +17,8 @@ class Api::V1::ProjectsController < ApplicationController
       id: params[:projectid], project_name: params[:projectName], creation_date: params[:creationDate], expiry_date: params[:expiryDate], enabled: params[:enabled], target_countries: params[:country], project_cost: params[:projectcost], project_url: params[:projectUrl], number: params[:number], keyword: params[:keyword]
     }
     @project = Project.find_project(link_params)
-    if @project.empty?
-      render json: { message: 'no project found' }
+    if @project.is_a? String
+      render json: { message: @project }
     end
   end
 end

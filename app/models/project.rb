@@ -48,7 +48,7 @@ class Project < ApplicationRecord
   def self.find_highest_cost(projects)
     date = DateTime.now.strftime('%m%d%Y %T')
     highest_cost = []
-    # run if more than one project is in array
+    # run if more than one project is in array, 9 being absolute project length
     if projects.length > 1
       projects.each do |project|
         # if empty, make project what we are testing against
@@ -59,14 +59,23 @@ class Project < ApplicationRecord
           highest_cost = project
         end
       end
-    else
-      # if only one project, return that project to controller
+    elsif projects.length == 9
       highest_cost = projects
+    else
+      highest_cost = 'no project found'
+      # if only one project, return that project to controller
     end
+    if !highest_cost.empty?
     # open log, add when data was accessed and give id
-    open('logs.txt', 'a') do |f|
-      f << "Web Service Accessed on #{date}, responding with Project id: #{highest_cost['id']}"
-      f << "\n"
+      open('logs.txt', 'a') do |f|
+        f << "Web Service Accessed on #{date}, responding with Project id: #{highest_cost['id']}"
+        f << "\n"
+      end
+    else
+      open('logs.txt', 'a') do |f|
+        f << "Web Service Accessed on #{date}, no project found"
+        f << "\n"
+      end
     end
     # return highest cost project to requestee
     highest_cost
@@ -75,7 +84,7 @@ class Project < ApplicationRecord
   def self.find_project(link_params)
     selected_projects = []
     # remove all params that are empty
-    slim_params = (link_params.reject { |_, v| v.blank? })
+    slim_params = (link_params.reject { |_, v| v.blank? }).stringify_keys
     # if given id in params, try to find it in qualifying array
     all_projects = self.all_projects
     if slim_params.empty?
@@ -85,7 +94,12 @@ class Project < ApplicationRecord
     else
       all_projects.each do |project|
         # send each project to see if parameters match hash values
-        selected_projects << sift_through(project.stringify_keys, slim_params.stringify_keys)
+         st = sift_through(project.stringify_keys, slim_params.stringify_keys)
+        if st == slim_params
+          next
+        else
+          selected_projects << st
+        end
       end
     end
     # send all projects with matching parameters to find the one with highest cost
@@ -97,8 +111,10 @@ class Project < ApplicationRecord
       # check if we have to go through each target key
       if key == 'number' || key == 'keyword'
         project['target_keys'].each do |target_hash|
-          # check target keys for matching values
+          # check target keys for matching or greater values
           if target_hash.any? { target_hash[key] == value }
+            return project
+          elsif target_hash['number'] > slim_params['number'].to_i
             return project
           end
         end
