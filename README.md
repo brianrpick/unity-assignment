@@ -12,6 +12,7 @@ projectcost
 projecturl
 targetkeys
 ```
+*This version of the API is only accepting single parameter querys*
 
 ### Prerequisites
 
