@@ -1,6 +1,17 @@
 # Unity SDET Test Assignment
 
-This is a simple RESTful API made to be lightweight and easy to use. It runs on rails 5 and uses a txt file as a database.
+This is a simple RESTful API made to be lightweight and easy to use. It runs on rails 5 and uses a txt file as a database. You can create a 'project' that contains informaton which is stored in the txt file called 'projects.txt'. The project 'model' contains:
+```
+id
+projectname
+creationdate
+exirydate (expiration date)
+enabled (default to true)
+targetcountries
+projectcost
+projecturl
+targetkeys
+```
 
 ### Prerequisites
 
