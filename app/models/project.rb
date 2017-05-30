@@ -77,10 +77,12 @@ class Project < ApplicationRecord
     # remove all params that are empty
     slim_params = (link_params.reject { |_, v| v.blank? })
     # if given id in params, try to find it in qualifying array
-    if slim_params[:id]
+    all_projects = self.all_projects
+    if slim_params.empty?
+      selected_projects = all_projects
+    elsif slim_params[:id]
       selected_projects = all_projects.find {|i| i["id"] == slim_params[:id] }
     else
-      all_projects = self.all_projects
       all_projects.each do |project|
         # send each project to see if parameters match hash values
         selected_projects << sift_through(project.stringify_keys, slim_params.stringify_keys)
