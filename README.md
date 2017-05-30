@@ -28,7 +28,7 @@ bundle exec rspec --tty spec/request/projects_controller_spec.rb
 
 ### Break down
 
-These tests run Get/Post routes on the API.
+These tests run Get/Post routes on the API. Heres an example of what the tests do:
 ```
 (your local server)/api/v1/requestproject.json?country=YES
 ```
