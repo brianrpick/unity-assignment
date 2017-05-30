@@ -17,48 +17,63 @@ class Project < ApplicationRecord
       # maybe running json.parse on each prjoect will work instead of eval
       test_project = eval(project)
       # check if any criteria is disqualifying
-      unless check(test_project)
+      if check(test_project)
         all_projects << test_project
       end
     end
-    all_projects
+    return all_projects
   end
 
   def self.check(project)
     date = DateTime.strptime(project['expiry_date'], '%m%d%Y %T')
     if project['enabled'] == false || date < Date.today || project['project_url'].nil?
       return false
+    else
+      return true
     end
+  end
+
+  def self.find_highest_cost(projects)
+    highest_cost = []
+    if projects.length > 1
+      projects.each do |project|
+        if highest_cost.empty?
+          highest_cost = project
+        elsif project['project_cost'].to_i > highest_cost['project_cost'].to_i
+          highest_cost = project
+        end
+      end
+    else
+      highest_cost = projects
+    end
+    highest_cost
   end
 
   def self.find_project(link_params)
     selected_projects = []
-    reduced_params = link_params.reject{|_, v| v.blank?}
-    all_projects = self.all_projects
-    unless reduced_params[:id]
-      reduced_params.each do |key, value|
-        all_projects.each_with_index do |project, i|
-          if project[i][:"#{key}"] == value
-            selected_projects << project
-            i++
-          else
-            i++
-          end
-        end
+    slim_params = (link_params.reject { |_, v| v.blank? })
+    if slim_params[:id]
+      selected_projects = all_projects.find {|i| i["id"] == slim_params[:id] }
+    else
+      all_projects = self.all_projects
+      all_projects.each do |project|
+        selected_projects << sift_through(project.stringify_keys, slim_params.stringify_keys)
       end
     end
-    # if all values are empty, send to find highest cost
+    find_highest_cost(selected_projects)
   end
 
-  def self.find_highest_cost(all_projects)
-    highest_cost = {}
-    all_projects.each do |project|
-      if highest_cost.empty?
-        highest_cost = project
-      elsif project['project_cost'] > highest_cost['project_cost']
-        highest_cost = project
+  def self.sift_through(project, slim_params)
+    slim_params.each do |key, value|
+      if key == 'number' || key == 'keyword'
+        project['target_keys'].each do |target_hash|
+          if target_hash.any? { target_hash[key] == value }
+            return project
+          end
+        end
+      elsif project['target_countries'].include? slim_params[key]
+        return project
       end
     end
-    highest_cost
   end
 end
