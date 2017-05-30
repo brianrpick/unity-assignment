@@ -10,39 +10,26 @@ This is a simple RESTful API made to be lightweight and easy to use. It runs on 
 ## Getting Started
 
 1. First things first:
+Please execute these commands in the terminal
+```
 $ git clone git@github.com:brianrpick/unity-assignment.git
 $ cd unity-assignment
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
-
-```
-Give the example
+$ rails db:setup
+$ bundle install
 ```
 
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+Tests can be ran inside the terminal by executing the following code
 
-### Break down into end to end tests
+```
+bundle exec rspec --tty spec/request/projects_controller_spec.rb
+```
 
-Explain what these tests test and why
+### Break down
 
+These tests run Get/Post routes on the API.
 ```
 Give an example
 ```
