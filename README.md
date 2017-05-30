@@ -11,7 +11,7 @@ This is a simple RESTful API made to be lightweight and easy to use. It runs on 
 
 1. First things first:
 Please execute these commands in the terminal
-```
+
 $ git clone git@github.com:brianrpick/unity-assignment.git
 $ cd unity-assignment
 $ rails db:setup
