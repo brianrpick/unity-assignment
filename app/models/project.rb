@@ -48,14 +48,14 @@ class Project < ApplicationRecord
   def self.find_highest_cost(projects)
     date = DateTime.now.strftime('%m%d%Y %T')
     highest_cost = []
-    # run if more than one project is in array, 9 being absolute project length
+    # run if object is an array, and has a length
     if projects.is_a?(Array) && projects.length
       projects.each do |project|
         # if empty, make project what we are testing against
         if highest_cost.empty?
           highest_cost = project
-        # if the project's cost is higher than the previous, make it the 'highest cost'
         elsif project['project_cost'].to_i > highest_cost['project_cost'].to_i
+        # if the project's cost is higher than the previous, make it the 'highest cost'
           highest_cost = project
         end
       end
@@ -64,14 +64,14 @@ class Project < ApplicationRecord
       # if only one project, return that project to controller
     end
     if !highest_cost.empty?
-    # open log, add when data was accessed and give id
+    # if highest cost is contains something, add a log of it and return it to controller
       open('logs.txt', 'a') do |f|
         f << "Web Service Accessed on #{date}, responding with Project id: #{highest_cost['id']}"
         f << "\n"
       end
       highest_cost
-
     else
+      # since highest cost is empty log that no project was found, and return the error string
       open('logs.txt', 'a') do |f|
         f << "Web Service Accessed on #{date}, no project found"
         f << "\n"
@@ -85,20 +85,23 @@ class Project < ApplicationRecord
     selected_projects = []
     # remove all params that are empty
     slim_params = (link_params.reject { |_, v| v.blank? }).stringify_keys
-    # if given id in params, try to find it in qualifying array
     all_projects = self.all_projects
     if slim_params.empty?
+      # if parameter hash is empty, fill projects with all the projects that qualify
       selected_projects = all_projects
     elsif slim_params['id']
+      # if given id in params, try to find it in qualifying array
       selected_projects = all_projects.find {|i| i["id"] == slim_params['id'].to_i }
     else
       all_projects.each do |project|
-        # send each project to see if parameters match hash values
-         st = sift_through(project.stringify_keys, slim_params.stringify_keys)
-        if st == slim_params
+        # send each project to see if parameters match params' values
+        s_t = sift_through(project.stringify_keys, slim_params.stringify_keys)
+        if s_t == slim_params
+          # check to make sure sift through didnt give back the original parameters
           next
         else
-          selected_projects << st
+          #add the project to selected_projects
+          selected_projects << s_t
         end
       end
     end
@@ -108,18 +111,19 @@ class Project < ApplicationRecord
 
   def self.sift_through(project, slim_params)
     slim_params.each do |key, value|
-      # check if we have to go through each target key
+      # check if we have to go through each target key hash
       if key == 'number' || key == 'keyword'
         project['target_keys'].each do |target_hash|
-          # check target keys for matching or greater values
           if target_hash.any? { target_hash[key] == value }
+            # check if keyword matches params
             return project
           elsif slim_params['number'] && target_hash['number'] > slim_params['number'].to_i
+            # if the params number exists and is smaller than the project then send to selected_params
             return project
           end
         end
-      # see if country is inside project
       elsif project['target_countries'].include? slim_params[key]
+      # see if country is inside project
         return project
       end
     end
