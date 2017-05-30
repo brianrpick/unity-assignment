@@ -1,4 +1,4 @@
-class ProjectsController < ApplicationController
+class V1::ProjectsController < ApplicationController
   def create
     # create project to send to model method
     project = {

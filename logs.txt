@@ -3,3 +3,4 @@ New project created named: test project number 1, with id: 6 - This project was 
 Web Service Accessed on , responding with Project id: 2
 Web Service Accessed on , responding with Project id: 4
 Web Service Accessed on 05302017 01:04:27, responding with Project id: 4
+New project created named: test project number 1, with id: 6 - This project was created at 05302017 01:55:55
